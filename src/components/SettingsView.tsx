@@ -251,65 +251,73 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
             </div>
 
             <div className="border border-slate-150 dark:border-slate-850 rounded-xl overflow-hidden">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-400 uppercase border-b border-slate-150 dark:border-slate-850">
-                    <th className="p-3">Nota Mínima (%)</th>
-                    <th className="p-3">Porcentagem Bônus (%)</th>
-                    <th className="p-3">Valor de Bonificação (R$)</th>
-                    {isAdmin && <th className="p-3 text-center">Ações</th>}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-mono">
-                  {bonusTable.map((tier, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
-                       <td className="p-3">
+              {/* Header — oculto no mobile */}
+              <div className="hidden sm:grid sm:grid-cols-4 gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-950 rounded-lg text-[10px] font-bold text-slate-400 uppercase tracking-wider border border-slate-100 dark:border-slate-850">
+                <span>Nota Mínima (%)</span>
+                <span>% Bônus</span>
+                <span>Valor (R$)</span>
+                {isAdmin && <span className="text-center">Ações</span>}
+              </div>
+
+              {/* Linhas — cards no mobile, linha no desktop */}
+              <div className="space-y-3 sm:space-y-1">
+                {bonusTable.map((tier, idx) => (
+                  <div key={idx} className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 items-center">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase sm:hidden">Nota mín.</span>
+                      <div className="flex items-center gap-1">
                         <input
                           type="number"
                           disabled={!isAdmin}
                           value={tier.minScore}
                           onChange={(e) => handleTableCellChange(idx, 'minScore', parseInt(e.target.value) || 0)}
-                          className="w-20 p-1.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded text-sm font-bold text-slate-900 dark:text-slate-100"
+                          className="w-full p-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded-lg text-sm font-bold text-slate-900 dark:text-slate-100"
                         />
-                        <span className="text-xs text-slate-400 ml-1 font-sans font-bold">%</span>
-                      </td>
-                      <td className="p-3">
+                        <span className="text-xs text-slate-400 font-bold">%</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase sm:hidden">% Bônus</span>
+                      <div className="flex items-center gap-1">
                         <input
                           type="number"
                           disabled={!isAdmin}
                           value={tier.percentage}
                           onChange={(e) => handleTableCellChange(idx, 'percentage', parseInt(e.target.value) || 0)}
-                          className="w-20 p-1.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded text-sm font-bold text-slate-900 dark:text-slate-100"
+                          className="w-full p-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded-lg text-sm font-bold text-slate-900 dark:text-slate-100"
                         />
-                        <span className="text-xs text-slate-400 ml-1 font-sans font-bold">%</span>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-xs text-slate-400 mr-1 font-sans font-bold">R$</span>
+                        <span className="text-xs text-slate-400 font-bold">%</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase sm:hidden">Valor R$</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-slate-400 font-bold">R$</span>
                         <input
                           type="number"
                           disabled={!isAdmin}
                           value={tier.value}
                           step="0.01"
                           onChange={(e) => handleTableCellChange(idx, 'value', parseFloat(e.target.value) || 0)}
-                          className="w-24 p-1.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded text-sm font-bold text-slate-900 dark:text-slate-100"
+                          className="w-full p-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:outline-none rounded-lg text-sm font-bold text-slate-900 dark:text-slate-100"
                         />
-                      </td>
-                      {isAdmin && (
-                        <td className="p-3 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveTier(idx)}
-                            disabled={bonusTable.length <= 1}
-                            className="p-1 text-rose-500 hover:bg-rose-500/10 rounded disabled:opacity-35 cursor-pointer transition-all"
-                          >
-                            Excluir
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                    {isAdmin && (
+                      <div className="flex justify-center col-span-3 sm:col-span-1 mt-1 sm:mt-0">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTier(idx)}
+                          disabled={bonusTable.length <= 1}
+                          className="px-3 py-1.5 text-xs text-rose-500 hover:bg-rose-500/10 rounded-lg disabled:opacity-35 cursor-pointer transition-all font-bold border border-rose-500/20"
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-150 text-[11px] text-slate-500">
