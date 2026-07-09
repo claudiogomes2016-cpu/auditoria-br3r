@@ -184,6 +184,19 @@ export async function changeSystemPassword(newPassword: string): Promise<boolean
   return true;
 }
 
+// DELETE individual
+export async function deleteAudit(id: string): Promise<boolean> {
+  const { error } = await supabase.from('audits').delete().eq('id', id);
+  if (error) { console.error(error); return false; }
+  return true;
+}
+
+export async function deleteActionPlan(id: string): Promise<boolean> {
+  const { error } = await supabase.from('action_plans').delete().eq('id', id);
+  if (error) { console.error(error); return false; }
+  return true;
+}
+
 // RESET
 export async function resetDatabase(): Promise<boolean> {
   await supabase.from('audits').delete().neq('id', '00000000-0000-0000-0000-000000000000');
