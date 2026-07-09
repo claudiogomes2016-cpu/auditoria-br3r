@@ -12,14 +12,15 @@ import {
   TrendingUp, AlertTriangle, CheckCircle2, ClipboardList, 
   Calendar, Shield, Filter, RotateCcw, Award, Users, AlertCircle 
 } from 'lucide-react';
-import { Audit, AuditQuestion } from '../types';
+import { Audit, AuditQuestion, RemunerationSettings } from '../types';
 
 interface DashboardViewProps {
   audits: Audit[];
   questions: AuditQuestion[];
+  settings: RemunerationSettings;
 }
 
-export default function DashboardView({ audits, questions }: DashboardViewProps) {
+export default function DashboardView({ audits, questions, settings }: DashboardViewProps) {
   // Filter States
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
@@ -111,18 +112,32 @@ export default function DashboardView({ audits, questions }: DashboardViewProps)
   const ncMetrics = useMemo(() => {
     let totalNCs = 0;
     let criticalNCs = 0;
+    let ncAlta = 0, ncMedia = 0, ncBaixa = 0;
     filteredAudits.forEach(audit => {
       audit.answers.forEach(ans => {
         if (ans.status === 'NAO_CONFORME') {
           totalNCs++;
-          if (ans.details?.criticality === 'ALTA') {
-            criticalNCs++;
-          }
+          const crit = ans.details?.criticality;
+          if (crit === 'ALTA') { criticalNCs++; ncAlta++; }
+          else if (crit === 'MEDIA') ncMedia++;
+          else ncBaixa++;
         }
       });
     });
-    return { totalNCs, criticalNCs };
+    return { totalNCs, criticalNCs, ncAlta, ncMedia, ncBaixa };
   }, [filteredAudits]);
+
+  // Novo cálculo: Bônus por Desconto de NC
+  const bonusDesconto = useMemo(() => {
+    const base = settings?.bonusBase ?? 150;
+    const dAlta = settings?.discountAlta ?? 15;
+    const dMedia = settings?.discountMedia ?? 8;
+    const dBaixa = settings?.discountBaixa ?? 4;
+
+    const totalDesconto = (ncMetrics.ncAlta * dAlta) + (ncMetrics.ncMedia * dMedia) + (ncMetrics.ncBaixa * dBaixa);
+    const bonusFinal = Math.max(0, base - totalDesconto);
+    return { base, totalDesconto, bonusFinal, dAlta, dMedia, dBaixa };
+  }, [ncMetrics, settings]);
 
   // Remuneration / Bonificações KPIs
   const remunerationMetrics = useMemo(() => {
@@ -425,27 +440,31 @@ export default function DashboardView({ audits, questions }: DashboardViewProps)
           </div>
         </div>
 
-        {/* KPI: Bonificação */}
-        <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm transition-all flex flex-col justify-between">
+        {/* KPI: Bônus por Desconto NC — NOVO SISTEMA */}
+        <div className="p-5 rounded-2xl border border-indigo-200 dark:border-indigo-900/50 bg-white dark:bg-slate-900 shadow-sm transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-              Bonificação Gerada
-            </span>
+            <span className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Bônus a Pagar</span>
             <Award className="h-5 w-5 text-indigo-500" />
           </div>
-          <div className="my-3">
-            <span className="text-3xl font-display font-extrabold text-indigo-600 dark:text-indigo-400">
-              R$ {remunerationMetrics.totalBonus.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="my-2">
+            <span className={`text-3xl font-display font-extrabold ${bonusDesconto.bonusFinal <= 0 ? 'text-rose-500' : bonusDesconto.bonusFinal < bonusDesconto.base * 0.7 ? 'text-amber-500' : 'text-emerald-500'}`}>
+              R$ {bonusDesconto.bonusFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
-            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 block mt-1">
-              Ref. a {totalAudits} auditorias aplicadas
-            </span>
+            <span className="text-xs text-slate-400 block mt-1">Base: R$ {bonusDesconto.base.toFixed(2)} — Desconto: <span className="text-rose-400 font-bold">- R$ {bonusDesconto.totalDesconto.toFixed(2)}</span></span>
           </div>
-          <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 flex justify-between">
-            <span>Méd. por Auditoria:</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              R$ {remunerationMetrics.avgBonus.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-2 space-y-1">
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>🔴 Alta ({ncMetrics.ncAlta} NCs × R${bonusDesconto.dAlta})</span>
+              <span className="text-rose-400 font-bold">- R$ {(ncMetrics.ncAlta * bonusDesconto.dAlta).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>🟡 Média ({ncMetrics.ncMedia} NCs × R${bonusDesconto.dMedia})</span>
+              <span className="text-amber-400 font-bold">- R$ {(ncMetrics.ncMedia * bonusDesconto.dMedia).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>🟢 Baixa ({ncMetrics.ncBaixa} NCs × R${bonusDesconto.dBaixa})</span>
+              <span className="text-slate-400 font-bold">- R$ {(ncMetrics.ncBaixa * bonusDesconto.dBaixa).toFixed(2)}</span>
+            </div>
           </div>
         </div>
 
