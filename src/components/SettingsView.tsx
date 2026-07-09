@@ -23,6 +23,10 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
   const [bonusTable, setBonusTable] = useState([...settings.table].sort((a, b) => b.minScore - a.minScore));
   const [maxBonus, setMaxBonus] = useState(settings.maxBonusValue);
   const [scoringMethod, setScoringMethod] = useState(settings.scoringMethod || 'WEIGHTED');
+  const [bonusBase, setBonusBase] = useState(settings.bonusBase ?? 150);
+  const [discountAlta, setDiscountAlta] = useState(settings.discountAlta ?? 15);
+  const [discountMedia, setDiscountMedia] = useState(settings.discountMedia ?? 8);
+  const [discountBaixa, setDiscountBaixa] = useState(settings.discountBaixa ?? 4);
   const [updating, setUpdating] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -106,7 +110,11 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
     const newSettings: RemunerationSettings = {
       table: bonusTable.sort((a, b) => b.minScore - a.minScore),
       maxBonusValue: maxBonus,
-      scoringMethod: scoringMethod as 'WEIGHTED' | 'SIMPLE'
+      scoringMethod: scoringMethod as 'WEIGHTED' | 'SIMPLE',
+      bonusBase,
+      discountAlta,
+      discountMedia,
+      discountBaixa,
     };
 
     try {
@@ -209,30 +217,60 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase">Teto Máximo do Bônus (R$)</label>
-              <input
-                type="number"
-                disabled={!isAdmin}
-                value={maxBonus}
-                onChange={(e) => setMaxBonus(parseFloat(e.target.value))}
-                className="w-full p-2.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-slate-100"
-              />
+              <input type="number" disabled={!isAdmin} value={maxBonus} onChange={(e) => setMaxBonus(parseFloat(e.target.value))}
+                className="w-full p-2.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-slate-100" />
               <span className="text-xs text-slate-400">Valor teto de referência (ex: R$ 250,00 para 100% de nota).</span>
             </div>
-
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase">Método de Cálculo da Nota</label>
-              <select
-                disabled={!isAdmin}
-                value={scoringMethod}
-                onChange={(e) => setScoringMethod(e.target.value)}
-                className="w-full p-2.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-slate-100"
-              >
+              <select disabled={!isAdmin} value={scoringMethod} onChange={(e) => setScoringMethod(e.target.value)}
+                className="w-full p-2.5 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-slate-100">
                 <option value="WEIGHTED">Ponderado por Categoria (Segurança 40%, Qualidade 25%...)</option>
                 <option value="SIMPLE">Média Simples (Ideal para Auditorias Diárias/Segmentadas)</option>
               </select>
-              <span className="text-xs text-slate-400">
-                A <strong>Média Simples</strong> calcula o percentual direto de itens conformes, evitando penalidades severas em vistorias curtas.
-              </span>
+              <span className="text-xs text-slate-400">A <strong>Média Simples</strong> calcula o percentual direto de itens conformes, evitando penalidades severas em vistorias curtas.</span>
+            </div>
+          </div>
+
+          {/* NOVO: Sistema de Bônus por Desconto de NC */}
+          <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div>
+              <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest block">🎯 Sistema de Bônus por Desconto de NC</span>
+              <span className="text-xs text-slate-400 mt-1 block">Cada não conformidade encontrada desconta um valor fixo do bônus base mensal da equipe Sodexo.</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5 col-span-1 sm:col-span-2">
+                <label className="text-xs font-bold text-slate-400 uppercase">💰 Bônus Base do Mês (R$)</label>
+                <input type="number" disabled={!isAdmin} value={bonusBase} step="10" onChange={(e) => setBonusBase(parseFloat(e.target.value) || 0)}
+                  className="w-full p-2.5 bg-white dark:bg-slate-850 border border-indigo-300 dark:border-indigo-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-slate-100" />
+                <span className="text-xs text-slate-400">Defina o valor que a equipe pode receber este mês: R$150, R$200 ou R$250. Você ajusta mês a mês conforme evolução.</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-rose-400 uppercase">🔴 Desconto NC Alta (R$)</label>
+                <input type="number" disabled={!isAdmin} value={discountAlta} step="1" onChange={(e) => setDiscountAlta(parseFloat(e.target.value) || 0)}
+                  className="w-full p-2.5 bg-white dark:bg-slate-850 border border-rose-300 dark:border-rose-800 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-slate-900 dark:text-slate-100" />
+                <span className="text-xs text-slate-400">Segurança / Norma Crítica</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-amber-400 uppercase">🟡 Desconto NC Média (R$)</label>
+                <input type="number" disabled={!isAdmin} value={discountMedia} step="1" onChange={(e) => setDiscountMedia(parseFloat(e.target.value) || 0)}
+                  className="w-full p-2.5 bg-white dark:bg-slate-850 border border-amber-300 dark:border-amber-800 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-slate-900 dark:text-slate-100" />
+                <span className="text-xs text-slate-400">Qualidade / Organização</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-emerald-400 uppercase">🟢 Desconto NC Baixa (R$)</label>
+                <input type="number" disabled={!isAdmin} value={discountBaixa} step="1" onChange={(e) => setDiscountBaixa(parseFloat(e.target.value) || 0)}
+                  className="w-full p-2.5 bg-white dark:bg-slate-850 border border-emerald-300 dark:border-emerald-800 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-slate-900 dark:text-slate-100" />
+                <span className="text-xs text-slate-400">Limpeza / Gestão</span>
+              </div>
+
+              <div className="col-span-1 sm:col-span-2 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/20 text-xs text-slate-500">
+                <strong className="text-indigo-400">Exemplo:</strong> Bônus base R${bonusBase.toFixed(0)} — 2 NCs Alta (−R${(2*discountAlta).toFixed(0)}) + 3 NCs Média (−R${(3*discountMedia).toFixed(0)}) = <strong className="text-emerald-400">R${Math.max(0, bonusBase - 2*discountAlta - 3*discountMedia).toFixed(2)} a pagar</strong>
+              </div>
             </div>
           </div>
 
