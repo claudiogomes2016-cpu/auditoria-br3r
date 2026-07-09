@@ -61,7 +61,7 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
     }
   };
 
-  const isAdmin = currentUser.role === 'ADMIN';
+  const isAdmin = currentUser.role === 'ADMIN' || currentUser.role === 'SUPERVISOR';
 
   // Handle single cell change
   const handleTableCellChange = (idx: number, field: 'minScore' | 'percentage' | 'value', val: number) => {
@@ -153,22 +153,30 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
   };
 
   const handleTriggerReset = async () => {
-    if (!confirm('ATENÇÃO: Você tem certeza que deseja resetar o banco de dados para o estado inicial? Isso irá apagar auditorias criadas recentemente.')) {
+    const primeira = confirm('⚠️ ATENÇÃO!\n\nDeseja mesmo EXCLUIR TUDO?\n\nIsso vai apagar permanentemente:\n• Todas as auditorias\n• Todos os planos de ação\n• Todo o histórico de acessos\n\nEssa ação NÃO pode ser desfeita.');
+    if (!primeira) return;
+
+    const segunda = confirm('✋ ÚLTIMA CONFIRMAÇÃO\n\nTem ABSOLUTA certeza?\n\nDigite OK na próxima tela para confirmar.');
+    if (!segunda) return;
+
+    const confirmacao = prompt('Digite EXCLUIR (em maiúsculas) para confirmar a exclusão de todos os dados:');
+    if (confirmacao !== 'EXCLUIR') {
+      alert('Operação cancelada. Você não digitou EXCLUIR corretamente.');
       return;
     }
-    
+
     setUpdating(true);
     try {
       const success = await onResetDatabase();
       if (success) {
-        alert('Banco de dados resetado com sucesso! A página será atualizada.');
+        alert('✅ Banco de dados limpo com sucesso! A página será atualizada.');
         window.location.reload();
       } else {
-        alert('Erro ao resetar banco de dados.');
+        alert('❌ Erro ao limpar banco de dados.');
       }
     } catch (err) {
       console.error(err);
-      alert('Erro de conexão ao resetar.');
+      alert('❌ Erro de conexão.');
     } finally {
       setUpdating(false);
     }
@@ -409,8 +417,8 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
               >
                 <RotateCcw className="h-4 w-4 text-rose-500" />
                 <div>
-                  <span className="block font-bold text-rose-500">Restaurar Banco de Dados</span>
-                  <span className="text-xs text-slate-400 font-normal">Reiniciar todo o sistema com dados de demonstração</span>
+                  <span className="block font-bold text-rose-500">🗑️ Excluir Todos os Dados</span>
+                  <span className="text-xs text-slate-400 font-normal">Apaga permanentemente auditorias, planos de ação e histórico. Requer confirmação.</span>
                 </div>
               </button>
             )}
