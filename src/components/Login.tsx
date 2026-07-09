@@ -23,6 +23,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     { label: 'Rickson (Analista)', username: 'rickson', role: 'ADMIN' },
     { label: 'Claudio (Supervisor)', username: 'claudio', role: 'SUPERVISOR' },
     { label: 'Rafael (Assistente)', username: 'rafael', role: 'AUDITOR' },
+    { label: 'Deivide (Auditor)', username: 'deivide', role: 'AUDITOR' },
   ];
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -80,6 +81,15 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 md:p-16 bg-slate-950">
         <div className="w-full max-w-md space-y-8">
+          {/* Logo visível apenas no mobile */}
+          <div className="flex lg:hidden items-center gap-3 justify-center mb-2">
+            <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-xl text-white shadow-lg">B</div>
+            <div>
+              <span className="font-bold tracking-tight text-base text-slate-100 block">TRACKIO AUDIT</span>
+              <span className="text-xs text-indigo-400 font-semibold tracking-wider">Gestão de Conformidade</span>
+            </div>
+          </div>
+
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-extrabold text-white tracking-tight">Acesse a plataforma</h2>
             <p className="mt-2 text-slate-400 text-sm">Entre com suas credenciais ou selecione um perfil rápido.</p>
