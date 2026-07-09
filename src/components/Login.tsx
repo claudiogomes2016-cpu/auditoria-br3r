@@ -55,8 +55,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center font-bold text-xl text-white shadow-lg">B</div>
             <div>
-              <span className="font-bold tracking-tight text-lg text-slate-100">BALL CORPORATION</span>
-              <span className="text-xs block text-indigo-400 font-semibold tracking-wider">UNIDADE BR3R</span>
+              <span className="font-bold tracking-tight text-lg text-slate-100">TRACKIO AUDIT</span>
+              <span className="text-xs block text-indigo-400 font-semibold tracking-wider">Gestão de Conformidade</span>
             </div>
           </div>
         </div>
@@ -69,12 +69,12 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             <span className="bg-gradient-to-r from-indigo-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Auditorias e Remuneração</span>
           </h1>
           <p className="text-slate-400 text-base leading-relaxed">
-            Plataforma corporativa de auditoria da Unidade Três Rios (BR3R). Gerenciamento de não conformidades, planos de ação e cálculo de bonificações.
+            Plataforma inteligente de auditoria operacional. Gerencie não conformidades, planos de ação e indicadores de conformidade em campo.
           </p>
         </div>
         <div className="relative z-10 flex items-center justify-between border-t border-slate-800 pt-6 text-xs text-slate-500">
-          <span>Parceria Logística Ball & Sodexo</span>
-          <span>© {new Date().getFullYear()} BR3R Logistics</span>
+          <span>Auditoria & Conformidade Operacional</span>
+          <span>© {new Date().getFullYear()} TrackIO Audit</span>
         </div>
       </div>
 
