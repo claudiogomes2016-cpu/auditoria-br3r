@@ -6,8 +6,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const USERS = [
-  { username: 'claudio', name: 'Claudio (Supervisor)', role: 'ADMIN' as const },
-  { username: 'rickson', name: 'Rickson (Analista)', role: 'SUPERVISOR' as const },
+  { username: 'rickson', name: 'Rickson (Analista)', role: 'ADMIN' as const },
+  { username: 'claudio', name: 'Claudio (Supervisor)', role: 'SUPERVISOR' as const },
   { username: 'rafael', name: 'Rafael (Assistente)', role: 'AUDITOR' as const },
 ];
 
