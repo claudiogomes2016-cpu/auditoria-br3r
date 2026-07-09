@@ -1716,7 +1716,7 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
               <Sparkles className="h-4.5 w-4.5" />
               <h5 className="text-xs font-display font-extrabold uppercase tracking-wide">Como auditar em 5 min?</h5>
             </div>
-            <ul className="text-xs text-slate-500 space-y-1.5 list-disc pl-4 leading-relaxed">
+            <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc pl-4 leading-relaxed">
               <li>Mantenha as respostas que estão em conformidade como <strong className="text-emerald-500">Conforme</strong>. Elas avançam automaticamente para poupar cliques.</li>
               <li>Só pare para preencher o formulário detalhado e anexar foto se houver uma <strong className="text-rose-500">Não Conformidade</strong>.</li>
               <li>Adicione evidências fotográficas rápidas usando os botões de simulação ou anexando diretamente pelo celular.</li>
