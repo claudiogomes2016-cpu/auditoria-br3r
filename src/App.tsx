@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, ClipboardList, CheckSquare, Calendar, 
   Settings as SettingsIcon, LogOut, Sun, Moon, Shield, Menu, X 
