@@ -114,13 +114,18 @@ export interface ActionPlan {
 }
 
 export interface BonusConfigItem {
-  minScore: number; // e.g. 95 (for >= 95%)
-  percentage: number; // e.g. 95
-  value: number; // e.g. 237.5
+  minScore: number;
+  percentage: number;
+  value: number;
 }
 
 export interface RemunerationSettings {
   table: BonusConfigItem[];
-  maxBonusValue: number; // e.g. 250.00
+  maxBonusValue: number;
   scoringMethod?: 'WEIGHTED' | 'SIMPLE';
+  // Novo sistema de desconto por NC
+  bonusBase: number;        // Bônus base do mês (ex: R$150)
+  discountAlta: number;     // Desconto por NC ALTA (ex: R$15)
+  discountMedia: number;    // Desconto por NC MÉDIA (ex: R$8)
+  discountBaixa: number;    // Desconto por NC BAIXA (ex: R$4)
 }
