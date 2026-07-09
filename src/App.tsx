@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, ClipboardList, CheckSquare, Calendar, 
   Settings as SettingsIcon, LogOut, Sun, Moon, Shield, Menu, X 
@@ -127,10 +127,10 @@ export default function App() {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-display font-extrabold text-sm tracking-tight text-slate-800 dark:text-slate-100">AUDITORIA BR3R</span>
+              <span className="font-display font-extrabold text-sm tracking-tight text-slate-800 dark:text-slate-100">TRACKIO AUDIT</span>
               <span className="text-[10px] bg-indigo-500/10 text-indigo-500 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">v2.0</span>
             </div>
-            <span className="text-xs block text-slate-500 dark:text-slate-400 font-semibold tracking-wider">Ball Corporation & Sodexo · BR3R</span>
+            <span className="text-xs block text-slate-500 dark:text-slate-400 font-semibold tracking-wider">Gestão de Conformidade Operacional</span>
           </div>
         </div>
 
@@ -208,7 +208,7 @@ export default function App() {
           </div>
         ) : (
           <div className="animate-fade-in">
-            {activeTab === 'DASHBOARD' && <DashboardView audits={audits} questions={AUDIT_QUESTIONS} />}
+            {activeTab === 'DASHBOARD' && <DashboardView audits={audits} questions={AUDIT_QUESTIONS} settings={settings || { table: [], maxBonusValue: 250, bonusBase: 150, discountAlta: 15, discountMedia: 8, discountBaixa: 4 }} />}
             {activeTab === 'AUDIT' && (
               <AuditWizard currentUser={currentUser} questions={AUDIT_QUESTIONS} settings={settings || { table: [], maxBonusValue: 250 }}
                 onSubmitAudit={handleSubmitAudit} editingAudit={editingAudit}
@@ -222,7 +222,7 @@ export default function App() {
       </main>
 
       <footer className="py-6 text-center border-t border-slate-150 dark:border-slate-850 text-slate-400 dark:text-slate-500 text-[10px] font-semibold no-print bg-white dark:bg-slate-900 transition-colors">
-        PLATACOOP · PROGRAMA DE EXCELÊNCIA OPERACIONAL BALL CORPORATION TRÊS RIOS (BR3R) & SODEXO
+        TRACKIO AUDIT · Gestão de Conformidade Operacional
         <span className="block mt-1 font-normal">Desenvolvido em conformidade com as diretrizes e regras de ouro de segurança do trabalho Ball.</span>
       </footer>
     </div>
