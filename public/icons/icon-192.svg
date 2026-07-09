@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Fundo azul TrackIO -->
+  <rect width="192" height="192" rx="38" fill="#1B4BF5"/>
+  <!-- Checklist / clipboard icon -->
+  <rect x="52" y="38" width="88" height="116" rx="10" fill="white" opacity="0.15"/>
+  <rect x="58" y="44" width="76" height="104" rx="8" fill="white" opacity="0.95"/>
+  <!-- Clip top -->
+  <rect x="76" y="34" width="40" height="18" rx="9" fill="#1B4BF5"/>
+  <rect x="82" y="37" width="28" height="12" rx="6" fill="#0f2fa0"/>
+  <!-- Check marks -->
+  <polyline points="70,80 80,92 108,68" fill="none" stroke="#1B4BF5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="70" y1="112" x2="122" y2="112" stroke="#c7d3ff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="70" y1="128" x2="110" y2="128" stroke="#c7d3ff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Magnifying glass overlay -->
+  <circle cx="130" cy="136" r="22" fill="#1B4BF5"/>
+  <circle cx="130" cy="136" r="13" fill="none" stroke="white" stroke-width="4"/>
+  <line x1="139" y1="146" x2="148" y2="155" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>
