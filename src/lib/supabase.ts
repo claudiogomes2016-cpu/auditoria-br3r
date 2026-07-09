@@ -9,6 +9,7 @@ export const USERS = [
   { username: 'rickson', name: 'Rickson (Analista)', role: 'ADMIN' as const },
   { username: 'claudio', name: 'Claudio (Supervisor)', role: 'SUPERVISOR' as const },
   { username: 'rafael', name: 'Rafael (Assistente)', role: 'AUDITOR' as const },
+  { username: 'deivide', name: 'Deivide (Auditor)', role: 'AUDITOR' as const },
 ];
 
 export const AUDIT_QUESTIONS = [
@@ -53,4 +54,8 @@ export const DEFAULT_SETTINGS = {
   ],
   maxBonusValue: 250.00,
   scoringMethod: 'WEIGHTED' as const,
+  bonusBase: 150.00,
+  discountAlta: 15.00,
+  discountMedia: 8.00,
+  discountBaixa: 4.00,
 };
