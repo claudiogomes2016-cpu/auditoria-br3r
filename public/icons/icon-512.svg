@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="100" fill="#1B4BF5"/>
+  <rect x="128" y="90" width="256" height="332" rx="28" fill="white" opacity="0.15"/>
+  <rect x="142" y="104" width="228" height="304" rx="22" fill="white" opacity="0.95"/>
+  <!-- Clip top -->
+  <rect x="196" y="80" width="120" height="52" rx="26" fill="#1B4BF5"/>
+  <rect x="210" y="88" width="92" height="36" rx="18" fill="#0f2fa0"/>
+  <!-- Check mark -->
+  <polyline points="178,218 208,252 290,180" fill="none" stroke="#1B4BF5" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Lines -->
+  <line x1="178" y1="304" x2="334" y2="304" stroke="#c7d3ff" stroke-width="14" stroke-linecap="round"/>
+  <line x1="178" y1="344" x2="300" y2="344" stroke="#c7d3ff" stroke-width="14" stroke-linecap="round"/>
+  <!-- Lupa -->
+  <circle cx="352" cy="376" r="62" fill="#1B4BF5"/>
+  <circle cx="352" cy="376" r="36" fill="none" stroke="white" stroke-width="12"/>
+  <line x1="376" y1="402" x2="404" y2="430" stroke="white" stroke-width="12" stroke-linecap="round"/>
+</svg>
