@@ -9,6 +9,7 @@ import {
   RotateCcw, ShieldAlert, KeyRound, Clock, User 
 } from 'lucide-react';
 import { RemunerationSettings, AccessLog, UserRole } from '../types';
+import { changeSystemPassword } from '../lib/api';
 
 interface SettingsViewProps {
   settings: RemunerationSettings;
@@ -25,6 +26,36 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
   const [updating, setUpdating] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Password change state
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMsg, setPasswordMsg] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  const handleChangePassword = async () => {
+    setPasswordMsg('');
+    setPasswordError('');
+    if (newPassword.length < 4) { setPasswordError('A senha deve ter no mínimo 4 caracteres.'); return; }
+    if (newPassword !== confirmPassword) { setPasswordError('As senhas não coincidem.'); return; }
+
+    setChangingPassword(true);
+    try {
+      const ok = await changeSystemPassword(newPassword);
+      if (ok) {
+        setPasswordMsg('Senha alterada com sucesso!');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setPasswordError('Erro ao alterar a senha.');
+      }
+    } catch {
+      setPasswordError('Erro de conexão.');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   const isAdmin = currentUser.role === 'ADMIN';
 
@@ -337,6 +368,39 @@ export default function SettingsView({ settings, accessLogs, currentUser, onUpda
                 </div>
               </button>
             )}
+          </div>
+        </div>
+
+        {/* Trocar Senha do Sistema */}
+        <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-850 pb-3">
+            <KeyRound className="h-5 w-5 text-indigo-500" />
+            <h3 className="text-base font-display font-bold text-slate-800 dark:text-slate-100">Trocar Senha do Sistema</h3>
+          </div>
+
+          {passwordMsg && (
+            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">{passwordMsg}</div>
+          )}
+          {passwordError && (
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold">{passwordError}</div>
+          )}
+
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 block">Nova senha</label>
+              <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1 block">Confirmar nova senha</label>
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <button onClick={handleChangePassword} disabled={changingPassword}
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all cursor-pointer disabled:opacity-50">
+              {changingPassword ? 'Salvando...' : 'Salvar Nova Senha'}
+            </button>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Essa senha é usada por todos os perfis (Rickson, Claudio, Rafael) para acessar o sistema.</p>
           </div>
         </div>
 
