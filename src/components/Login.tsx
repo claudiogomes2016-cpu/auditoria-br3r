@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Lock, Shield, Eye, EyeOff } from 'lucide-react';
 import { UserRole } from '../types';
-import { loginUser } from '../lib/api';
+import { loginUser, getSystemPassword } from '../lib/api';
 
 interface LoginProps {
   onLoginSuccess: (user: { username: string; name: string; role: UserRole }) => void;
@@ -9,23 +9,26 @@ interface LoginProps {
 
 export default function Login({ onLoginSuccess }: LoginProps) {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('br3r2024');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [systemPassword, setSystemPassword] = useState('br3r2024');
 
-  const SENHA_CORRETA = 'br3r2024';
+  useEffect(() => {
+    getSystemPassword().then(setSystemPassword);
+  }, []);
 
   const preConfiguredUsers = [
-    { label: 'Claudio (Supervisor)', username: 'claudio', role: 'ADMIN' },
-    { label: 'Rickson (Analista)', username: 'rickson', role: 'SUPERVISOR' },
+    { label: 'Rickson (Analista)', username: 'rickson', role: 'ADMIN' },
+    { label: 'Claudio (Supervisor)', username: 'claudio', role: 'SUPERVISOR' },
     { label: 'Rafael (Assistente)', username: 'rafael', role: 'AUDITOR' },
   ];
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim()) { setError('Por favor, informe o usuário.'); return; }
-    if (password !== SENHA_CORRETA) { setError('Senha incorreta.'); return; }
+    if (password !== systemPassword) { setError('Senha incorreta.'); return; }
 
     setLoading(true);
     setError('');
