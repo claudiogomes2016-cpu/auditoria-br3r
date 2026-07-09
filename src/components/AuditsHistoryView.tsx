@@ -6,7 +6,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, Filter, Calendar, FileText, Download, Printer, 
-  X, CheckCircle2, AlertTriangle, ChevronRight, User, Shield, AlertCircle, Pencil
+  X, CheckCircle2, AlertTriangle, ChevronRight, User, Shield, AlertCircle, Pencil, Trash2
 } from 'lucide-react';
 import { Audit, AuditQuestion, AuditItemStatus, CriticalityLevel } from '../types';
 
@@ -14,9 +14,10 @@ interface AuditsHistoryViewProps {
   audits: Audit[];
   questions: AuditQuestion[];
   onEditAudit?: (audit: Audit) => void;
+  onDeleteAudit?: (id: string) => Promise<boolean>;
 }
 
-export default function AuditsHistoryView({ audits, questions, onEditAudit }: AuditsHistoryViewProps) {
+export default function AuditsHistoryView({ audits, questions, onEditAudit, onDeleteAudit }: AuditsHistoryViewProps) {
   // Filters
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
@@ -312,6 +313,19 @@ export default function AuditsHistoryView({ audits, questions, onEditAudit }: Au
                             >
                               <Pencil className="h-3.5 w-3.5" />
                               Editar
+                            </button>
+                          )}
+                          {onDeleteAudit && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`⚠️ Deseja mesmo excluir esta auditoria?\n\nData: ${a.date} | Conferente: ${a.conferente}\n\nEssa ação não pode ser desfeita.`)) {
+                                  onDeleteAudit(a.id);
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 transition-all rounded-lg font-semibold text-[11px] cursor-pointer flex items-center gap-1 border border-rose-500/20"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Excluir
                             </button>
                           )}
                         </div>
