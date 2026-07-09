@@ -88,8 +88,20 @@ export default function App() {
     return ok;
   };
 
+  const handleDeleteAudit = async (id: string): Promise<boolean> => {
+    const ok = await api.deleteAudit(id);
+    if (ok) await fetchSystemData();
+    return ok;
+  };
+
   const handleUpdateActionPlan = async (id: string, status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDO', observations: string): Promise<boolean> => {
     const ok = await api.updateActionPlan(id, status, observations, currentUser?.name || 'Sistema');
+    if (ok) await fetchSystemData();
+    return ok;
+  };
+
+  const handleDeleteActionPlan = async (id: string): Promise<boolean> => {
+    const ok = await api.deleteActionPlan(id);
     if (ok) await fetchSystemData();
     return ok;
   };
@@ -214,8 +226,8 @@ export default function App() {
                 onSubmitAudit={handleSubmitAudit} editingAudit={editingAudit}
                 onCancelEdit={() => { setEditingAudit(null); setActiveTab('HISTORY'); }} />
             )}
-            {activeTab === 'ACTION_PLANS' && <ActionPlansView actionPlans={actionPlans} currentUser={currentUser} onUpdateActionPlan={handleUpdateActionPlan} />}
-            {activeTab === 'HISTORY' && <AuditsHistoryView audits={audits} questions={AUDIT_QUESTIONS} onEditAudit={(audit) => { setEditingAudit(audit); setActiveTab('AUDIT'); }} />}
+            {activeTab === 'ACTION_PLANS' && <ActionPlansView actionPlans={actionPlans} currentUser={currentUser} onUpdateActionPlan={handleUpdateActionPlan} onDeleteActionPlan={handleDeleteActionPlan} />}
+            {activeTab === 'HISTORY' && <AuditsHistoryView audits={audits} questions={AUDIT_QUESTIONS} onEditAudit={(audit) => { setEditingAudit(audit); setActiveTab('AUDIT'); }} onDeleteAudit={handleDeleteAudit} />}
             {activeTab === 'SETTINGS' && <SettingsView settings={settings || { table: [], maxBonusValue: 250 }} accessLogs={accessLogs} currentUser={currentUser} onUpdateSettings={handleUpdateSettings} onResetDatabase={handleResetDatabase} />}
           </div>
         )}
