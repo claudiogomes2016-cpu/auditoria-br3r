@@ -312,29 +312,27 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
   };
 
   // Camera Simulation: Adds a mock photograph
-  const triggerCameraMock = (questionId: string) => {
-    // Elegant SVG base64 mock photo representing some logistical issues
-    const mockPhotos = [
-      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%23f1f5f9"/><circle cx="150" cy="100" r="40" fill="%23ef4444" opacity="0.1"/><path d="M120 120 L180 120 L150 70 Z" fill="%23ef4444"/><text x="150" y="155" font-family="sans-serif" font-size="12" font-weight="bold" fill="%23334155" text-anchor="middle">NC EVIDENCIA REGISTRADA</text></svg>',
-      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%23fef2f2"/><circle cx="150" cy="100" r="30" fill="%23ef4444" opacity="0.2"/><text x="150" y="115" font-family="sans-serif" font-size="30" fill="%23ef4444" text-anchor="middle">⚠️</text><text x="150" y="150" font-family="sans-serif" font-size="11" fill="%23ef4444" text-anchor="middle">Desvio de Segurança - Doca Aberta</text></svg>'
-    ];
-
-    const randomPhoto = mockPhotos[Math.floor(Math.random() * mockPhotos.length)];
-
-    setAnswers(prev => {
-      return prev.map(ans => {
-        if (ans.questionId === questionId && ans.details) {
-          return {
-            ...ans,
-            details: {
-              ...ans.details,
-              cameraPhotos: [...ans.details.cameraPhotos, randomPhoto]
-            }
-          };
-        }
-        return ans;
-      });
-    });
+  const triggerCamera = (questionId: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // abre câmera traseira no mobile
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setAnswers(prev => prev.map(ans => {
+          if (ans.questionId === questionId && ans.details) {
+            return { ...ans, details: { ...ans.details, cameraPhotos: [...ans.details.cameraPhotos, base64String] } };
+          }
+          return ans;
+        }));
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
   };
 
   // Upload Photo manually simulation
@@ -1134,11 +1132,11 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
                             <div className="flex gap-2">
                               <button
                                 type="button"
-                                onClick={() => triggerCameraMock(activeQuestion.id)}
+                                onClick={() => triggerCamera(activeQuestion.id)}
                                 className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-rose-600/10 transition-all"
                               >
                                 <Camera className="h-4 w-4" />
-                                Simular Câmera
+                                Abrir Câmera
                               </button>
                               
                               <label className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer shadow-md transition-all">
@@ -1216,7 +1214,7 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
                         <button
                           type="button"
                           onClick={() => setExpandedCategories(prev => ({ ...prev, [category]: !isExpanded }))}
-                          className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-850/80 transition-all text-left border-b border-slate-150 dark:border-slate-850 cursor-pointer"
+                          className="w-full flex items-center justify-between p-4 sm:p-4 bg-slate-50 dark:bg-slate-900/60 active:bg-slate-200 dark:active:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850/80 transition-all text-left border-b border-slate-150 dark:border-slate-850 cursor-pointer touch-manipulation select-none"
                         >
                           <div className="flex items-center gap-3">
                             <div className={`p-2 rounded-xl ${iconColor}`}>
@@ -1439,11 +1437,11 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
                                           <div className="flex gap-2">
                                             <button
                                               type="button"
-                                              onClick={() => triggerCameraMock(q.id)}
+                                              onClick={() => triggerCamera(q.id)}
                                               className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-rose-600/10 transition-all"
                                             >
                                               <Camera className="h-4 w-4" />
-                                              Simular Câmera
+                                              Abrir Câmera
                                             </button>
                                             
                                             <label className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer shadow-md transition-all">
