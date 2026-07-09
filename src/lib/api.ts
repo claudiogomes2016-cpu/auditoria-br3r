@@ -172,6 +172,18 @@ export async function getAccessLogs(): Promise<AccessLog[]> {
   }));
 }
 
+// PASSWORD (senha global do sistema)
+export async function getSystemPassword(): Promise<string> {
+  const { data } = await supabase.from('settings').select('data').eq('id', 2).single();
+  return data?.data?.password || 'br3r2024';
+}
+
+export async function changeSystemPassword(newPassword: string): Promise<boolean> {
+  const { error } = await supabase.from('settings').upsert({ id: 2, data: { password: newPassword } });
+  if (error) { console.error(error); return false; }
+  return true;
+}
+
 // RESET
 export async function resetDatabase(): Promise<boolean> {
   await supabase.from('audits').delete().neq('id', '00000000-0000-0000-0000-000000000000');
