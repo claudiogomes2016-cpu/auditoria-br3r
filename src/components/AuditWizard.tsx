@@ -474,14 +474,6 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
       setFormError('Selecione o Horário de Trabalho.');
       return;
     }
-    if (!liderSodexo.trim()) {
-      setFormError('Informe o Líder Sodexo do turno.');
-      return;
-    }
-    if (!area.trim()) {
-      setFormError('Informe a área que está sendo auditada.');
-      return;
-    }
     setFormError('');
 
     // Pre-populate answers: active questions get CONFORME (or current status), others get NAO_APLICAVEL
@@ -535,9 +527,10 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
       return;
     }
 
+    // Foto obrigatória virou aviso, não bloqueio
     if (photoValidationFailed) {
-      setFormError('Evidência fotográfica é obrigatória para itens de segurança ou qualidade em "Não Conforme".');
-      return;
+      const continuar = confirm('⚠️ Atenção: algumas NCs de segurança/qualidade não têm foto anexada.\n\nDeseja finalizar mesmo assim?');
+      if (!continuar) return;
     }
 
     setSubmitting(true);
@@ -861,6 +854,16 @@ export default function AuditWizard({ currentUser, questions, settings, onSubmit
           {/* STEP 2: ACTIVE CHECKLIST & PHOTO EVIDENCE */}
           {step === 2 && filteredQuestions.length > 0 && activeQuestion && (
             <div className="space-y-6">
+
+              {/* Botão fixo Voltar à Etapa Anterior */}
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full flex items-center gap-2 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                ← Voltar à Etapa Anterior (Dados da Auditoria)
+              </button>
               
               {/* View Mode Switcher and Quick Question Selector */}
               <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl">
