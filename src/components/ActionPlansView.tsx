@@ -6,7 +6,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   ClipboardList, AlertTriangle, CheckCircle2, Clock, 
-  Search, Filter, User, Calendar, Edit3, X, CheckSquare 
+  Search, Filter, User, Calendar, Edit3, X, CheckSquare, Trash2
 } from 'lucide-react';
 import { ActionPlan, CriticalityLevel, UserRole } from '../types';
 
@@ -14,9 +14,10 @@ interface ActionPlansViewProps {
   actionPlans: ActionPlan[];
   currentUser: { username: string; name: string; role: UserRole };
   onUpdateActionPlan: (id: string, status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDO', observations: string) => Promise<boolean>;
+  onDeleteActionPlan: (id: string) => Promise<boolean>;
 }
 
-export default function ActionPlansView({ actionPlans, currentUser, onUpdateActionPlan }: ActionPlansViewProps) {
+export default function ActionPlansView({ actionPlans, currentUser, onUpdateActionPlan, onDeleteActionPlan }: ActionPlansViewProps) {
   // Filters
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDO'>('ALL');
   const [criticalityFilter, setCriticalityFilter] = useState<'ALL' | CriticalityLevel>('ALL');
@@ -55,6 +56,13 @@ export default function ActionPlansView({ actionPlans, currentUser, onUpdateActi
     } finally {
       setSaving(false);
     }
+  };
+
+  // Handle delete plan
+  const handleDeletePlan = async (plan: ActionPlan) => {
+    const confirmar = confirm(`⚠️ Deseja mesmo excluir este plano de ação?\n\n"${plan.description}"\n\nEssa ação não pode ser desfeita.`);
+    if (!confirmar) return;
+    await onDeleteActionPlan(plan.id);
   };
 
   // Filtered action plans
@@ -263,12 +271,24 @@ export default function ActionPlansView({ actionPlans, currentUser, onUpdateActi
 
                   {/* Edit/Resolve Action trigger (Supervisor or Admin only) */}
                   {currentUser.role !== 'VISUALIZADOR' && (
-                    <button
-                      onClick={() => openEditModal(plan)}
-                      className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm hover:shadow-indigo-500/15 transition-all cursor-pointer"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openEditModal(plan)}
+                        className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm hover:shadow-indigo-500/15 transition-all cursor-pointer"
+                        title="Editar plano de ação"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </button>
+                      {(currentUser.role === 'ADMIN' || currentUser.role === 'SUPERVISOR') && (
+                        <button
+                          onClick={() => handleDeletePlan(plan)}
+                          className="p-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white shadow-sm transition-all cursor-pointer"
+                          title="Excluir plano de ação"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
